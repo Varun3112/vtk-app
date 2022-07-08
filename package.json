@@ -1,0 +1,19 @@
+{
+  "name": "vtk-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --config ./webpack.config.js",
+    "build": "webpack --progress --mode=production"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vtk.js": "^25.1.3"
+  },
+  "devDependencies": {
+    "kw-web-suite": "^11.1.0"
+  }
+}
