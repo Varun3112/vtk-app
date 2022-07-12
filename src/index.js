@@ -11,7 +11,6 @@ import vtkColorMaps from "vtk.js/Sources/Rendering/Core/ColorTransferFunction/Co
 import vtkHttpDataAccessHelper from "vtk.js/Sources/IO/Core/DataAccessHelper/HttpDataAccessHelper";
 import vtkScalarBarActor from "vtk.js/Sources/Rendering/Core/ScalarBarActor";
 import vtkDataArray from "vtk.js/Sources/Common/Core/DataArray";
-import * as fs from 'fs';
 import {
   ColorMode,
   ScalarMode,
@@ -31,10 +30,23 @@ let timeSeriesData = [];
 
 function downloadTimeSeries() {
   var files = [];
-  console.log(fs);
-  files = fs.readdirSync("../dist/examples/time-series").filter(function(file){
-    return file.match(/time-series_*.vtp$/);
-  });
+
+  var time_stamp = 0;
+  var filename = "time_series_" + time_stamp.toString() + ".vtp";
+  var filepath = "..\\dist\\examples\\time-series/" + filename;
+  var http = new XMLHttpRequest();
+  http.open("HEAD", filepath, false);
+  http.send();
+  while (http.status != 404) {
+    files.push(filename);
+    time_stamp = time_stamp + 1;
+    filename = "time_series_" + time_stamp.toString() + ".vtp";
+    filepath = "..\\dist\\examples\\time-series/" + filename;
+    http.open("HEAD", filepath, false);
+    http.send();
+  }
+
+  return Promise.all(
     files.map((filename) =>
       fetchBinary(`..\\dist\\examples\\time-series/${filename}`).then(
         (binary) => {
@@ -43,6 +55,7 @@ function downloadTimeSeries() {
           return reader.getOutputData(0);
         }
       )
+    )
   );
 }
 
@@ -260,7 +273,7 @@ function update(timeSeries) {
 
   var myTimer;
   function startAnimation(event) {
-    clearInterval(myTimer); 
+    clearInterval(myTimer);
     var timeStep = document.getElementById("timeSlider").value;
     var max = document.getElementById("timeSlider").max;
     myTimer = setInterval(function () {
